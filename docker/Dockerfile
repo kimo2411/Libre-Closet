@@ -31,7 +31,7 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY patches ./patches
-RUN npm ci
+RUN npm ci --omit=dev
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist

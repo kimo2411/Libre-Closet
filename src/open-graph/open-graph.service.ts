@@ -33,20 +33,13 @@ export class OpenGraphService {
     req: FastifyRequest,
   ) {
     if (type == 'file') {
-      const file = await this.fileRepository.findOne(
-        { shareableId },
-        {
-          populate: ['createdBy'],
-        },
-      );
-      const createdBy = await file?.createdBy?.load();
+      const file = await this.fileRepository.findOne({ shareableId });
       return {
         ogUrl: `${req.protocol}://${req.host}/file/${shareableId}`,
         ogTitle: file?.fileName,
-        ogDescription: `From ${createdBy?.email}`,
+        ogDescription: '家庭衣物相册图片',
         ogImage: this.fileUrlService.getWatermarkedFileUrl(shareableId, req),
         file,
-        createdBy,
       };
     }
 

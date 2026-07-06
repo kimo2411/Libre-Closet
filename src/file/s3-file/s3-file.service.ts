@@ -29,9 +29,10 @@ export class S3FileService extends FileService {
 
   public async storeImageFromFileUpload(
     upload: MultipartFile | undefined,
-    userId: any,
+    _userId: any,
     fileName?: string,
   ): Promise<File> {
+    void _userId;
     if (!upload) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
     }
@@ -76,7 +77,6 @@ export class S3FileService extends FileService {
     const file = this.fileRepository.create({
       fileName: storedFileName,
       createdOn: new Date().toISOString(),
-      createdBy: userId,
     });
     await this.em.persistAndFlush(file);
     return file;
@@ -93,11 +93,9 @@ export class S3FileService extends FileService {
     this.logger.debug(`Deleted image by url ${url}`);
   }
 
-  public async deleteById(fileId: any, userId: any): Promise<any> {
-    const file = await this.fileRepository.findOneOrFail({
-      id: fileId,
-      createdBy: userId,
-    });
+  public async deleteById(fileId: any, _userId: any): Promise<any> {
+    void _userId;
+    const file = await this.fileRepository.findOneOrFail({ id: fileId });
     await this.s3.deleteObject({
       Bucket: this.bucketName,
       Key: file.fileName,
@@ -107,8 +105,9 @@ export class S3FileService extends FileService {
 
   async copyImage(
     sourceFileName: string,
-    userId?: number,
+    _userId?: number,
   ): Promise<File | undefined> {
+    void _userId;
     let source: Readable | undefined;
     try {
       source = await this.get(sourceFileName);
@@ -131,7 +130,6 @@ export class S3FileService extends FileService {
     const file = this.fileRepository.create({
       fileName: newFileName,
       createdOn: new Date().toISOString(),
-      createdBy: userId,
     });
     await this.em.persistAndFlush(file);
     return file;

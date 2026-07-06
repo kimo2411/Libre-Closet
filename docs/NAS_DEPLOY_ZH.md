@@ -13,7 +13,7 @@ docker compose -f docker-compose.nas.yml up -d
 启动后打开：
 
 ```text
-http://你的NAS局域网IP:3000
+http://你的NAS局域网IP:32180
 ```
 
 ## 首次使用前建议修改

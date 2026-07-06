@@ -35,9 +35,10 @@ export class LocalFileService extends FileService {
 
   async storeImageFromFileUpload(
     upload: MultipartFile | undefined,
-    userId: any,
+    _userId: any,
     fileName?: string,
   ): Promise<File> {
+    void _userId;
     if (!upload) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
     }
@@ -70,7 +71,6 @@ export class LocalFileService extends FileService {
     const file = this.fileRepository.create({
       fileName: storedFileName,
       createdOn: new Date().toISOString(),
-      createdBy: userId,
     });
     await this.em.persistAndFlush(file);
     return file;
@@ -78,8 +78,9 @@ export class LocalFileService extends FileService {
 
   async copyImage(
     sourceFileName: string,
-    userId?: number,
+    _userId?: number,
   ): Promise<File | undefined> {
+    void _userId;
     let source: Readable | undefined;
     try {
       source = await this.get(sourceFileName);
@@ -106,7 +107,6 @@ export class LocalFileService extends FileService {
     const file = this.fileRepository.create({
       fileName: newFileName,
       createdOn: new Date().toISOString(),
-      createdBy: userId,
     });
     await this.em.persistAndFlush(file);
     return file;
@@ -137,11 +137,9 @@ export class LocalFileService extends FileService {
       .catch((err) => this.logger.warn(err));
   }
 
-  public async deleteById(fileId: any, userId: any): Promise<any> {
-    const file = await this.fileRepository.findOneOrFail({
-      id: fileId,
-      createdBy: userId,
-    });
+  public async deleteById(fileId: any, _userId: any): Promise<any> {
+    void _userId;
+    const file = await this.fileRepository.findOneOrFail({ id: fileId });
     await fs.promises
       .unlink(path.join(this.directory, file.fileName))
       .catch((err) => this.logger.warn(err));

@@ -1,75 +1,38 @@
-import { EntityRepository } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
-import { I18nContext } from 'nestjs-i18n';
-import { User } from '../dal/entity/user.entity';
 
 @Injectable()
 export class ViewContextService {
-  private logger = new Logger(ViewContextService.name);
-
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: EntityRepository<User>,
-    private configService: ConfigService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private configService: ConfigService) {}
 
   async buildContext(req: FastifyRequest) {
-    const locale = I18nContext.current()?.lang ?? 'en';
+    await Promise.resolve();
+    const locale = 'zh';
     const path = req.url.split('?')[0];
     const protocol =
       (req.headers['x-forwarded-proto'] as string) ?? req.protocol;
     const host = (req.headers['x-forwarded-host'] as string) ?? req.hostname;
     const canonicalUrl = `${protocol}://${host}${path}`;
-    const ogLocaleMap: Record<string, string> = {
-      en: 'en_US',
-      ru: 'ru_RU',
-      es: 'es_ES',
-      fr: 'fr_FR',
-      it: 'it_IT',
-      de: 'de_DE',
-    };
-
-    const siteUrl = this.configService.get<string>('SITE_URL') ?? host;
-    const baseUrl = `${protocol}://${host}`;
+    const baseUrl = req.url === '/' ? '' : path;
     const appName = this.configService.get<string>('APP_NAME');
     const appDescription =
       '运行在个人 NAS 上的家庭衣物位置相册，用照片记录衣物放在哪里。';
-    const ogImage = `${baseUrl}/assets/lazztech_icon.png`;
 
-    const context: Record<string, any> = {
+    return {
       appName,
-      siteUrl,
-      baseUrl: req.url === '/' ? '' : req.url,
-      authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
-      signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),
-      pwaEnabled: this.configService.get<boolean>('PWA_ENABLED'),
+      siteUrl: this.configService.get<string>('SITE_URL') ?? host,
+      baseUrl,
+      authEnabled: false,
+      signupsDisabled: true,
+      pwaEnabled: false,
       locale,
       canonicalUrl,
       ogUrl: canonicalUrl,
-      ogLocale: ogLocaleMap[locale] ?? 'en_US',
+      ogLocale: 'zh_CN',
       ogTitle: appName,
       ogDescription: appDescription,
-      ogImage,
+      ogImage: `${protocol}://${host}/assets/lazztech_icon.png`,
     };
-
-    try {
-      const token = (req.cookies as Record<string, string>)?.['access_token'];
-      if (token) {
-        const payload = await this.jwtService.verifyAsync(token, {
-          secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
-        });
-        const user = await this.userRepository.findOne({ id: payload.userId });
-        context.user = user;
-      }
-    } catch {
-      this.logger.debug('User payload not available');
-    }
-
-    return context;
   }
 }
