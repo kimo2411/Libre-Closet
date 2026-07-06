@@ -38,7 +38,7 @@ export class ViewContextService {
     const baseUrl = `${protocol}://${host}`;
     const appName = this.configService.get<string>('APP_NAME');
     const appDescription =
-      'Self-hosted wardrobe organizer. Catalog clothes with photos, build outfits, and install as an offline PWA. Free and open-source. No subscription, no ads.';
+      '运行在个人 NAS 上的家庭衣物位置相册，用照片记录衣物放在哪里。';
     const ogImage = `${baseUrl}/assets/lazztech_icon.png`;
 
     const context: Record<string, any> = {

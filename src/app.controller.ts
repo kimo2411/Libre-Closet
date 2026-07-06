@@ -4,14 +4,12 @@ import {
   Get,
   Logger,
   Post,
-  Render,
   Req,
   Res,
   Sse,
 } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import { AppService } from './app.service';
-import { I18n, I18nContext } from 'nestjs-i18n';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Controller()
@@ -23,46 +21,16 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @Render('index')
-  index(@I18n() i18n: I18nContext): any {
-    return {
-      pageTitle: i18n.t('lang.PAGE_TITLE_HOME'),
-      ogTitle: i18n.t('lang.PAGE_TITLE_HOME'),
-    };
+  index(@Res() reply: FastifyReply): void {
+    reply.redirect('/locations', 302);
   }
 
-  @Get('privacy')
-  @Render('privacy')
-  privacy(@I18n() i18n: I18nContext): any {
-    return {
-      pageTitle: i18n.t('lang.PRIVACY_TITLE'),
-      ogTitle: i18n.t('lang.PRIVACY_OG_TITLE'),
-      ogDescription: i18n.t('lang.PRIVACY_OG_DESC'),
-    };
-  }
-
-  @Get('about')
-  @Render('about')
-  about(@I18n() i18n: I18nContext): any {
-    return {
-      pageTitle: i18n.t('lang.ABOUT_TITLE'),
-      ogTitle: i18n.t('lang.ABOUT_OG_TITLE'),
-      ogDescription: i18n.t('lang.ABOUT_OG_DESC'),
-    };
-  }
-
-  @Get('terms')
-  @Render('terms')
-  terms(@I18n() i18n: I18nContext): any {
-    return {
-      pageTitle: i18n.t('lang.TERMS_TITLE'),
-      ogTitle: i18n.t('lang.TERMS_OG_TITLE'),
-      ogDescription: i18n.t('lang.TERMS_OG_DESC'),
-    };
+  @Get(['privacy', 'about', 'terms'])
+  redirectLegacyPages(@Res() reply: FastifyReply): void {
+    reply.redirect('/locations', 302);
   }
 
   @Get('chat')
-  @Render('chat')
   getChat(): any {
     return {
       message: this.appService.getHello(),
@@ -70,8 +38,9 @@ export class AppController {
   }
 
   @Get('offline.html')
-  @Render('offline')
-  getOffline() {}
+  getOffline(@Res() reply: FastifyReply): void {
+    reply.redirect('/locations', 302);
+  }
 
   @Sse('sse')
   getChatStream() {
@@ -95,34 +64,7 @@ export class AppController {
         <div class='chat-header'>
           Assistant
         </div>
-        <div class='chat-bubble'>1</div>
-      </div>
-      `);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.message$.next(`
-      <div class='chat chat-start'>
-        <div class='chat-header'>
-          Assistant
-        </div>
-        <div class='chat-bubble'>2</div>
-      </div>
-      `);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.message$.next(`
-      <div class='chat chat-start'>
-        <div class='chat-header'>
-          Assistant
-        </div>
-        <div class='chat-bubble'>3</div>
-      </div>
-      `);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.message$.next(`
-      <div class='chat chat-start'>
-        <div class='chat-header'>
-          Assistant
-        </div>
-        <div class='chat-bubble'>Hello World</div>
+        <div class='chat-bubble'>Hello</div>
       </div>
       `);
     this.logger.debug(`done with ${this.postMessages.name}`);
@@ -130,7 +72,7 @@ export class AppController {
 
   @Get('.well-known/*')
   well_known() {
-    return {}; // Just return empty object
+    return {};
   }
 
   @Get('sitemap.xml')
@@ -139,45 +81,22 @@ export class AppController {
       (req.headers['x-forwarded-proto'] as string) ?? req.protocol;
     const host = (req.headers['x-forwarded-host'] as string) ?? req.host;
     const baseUrl = `${protocol}://${host}`;
+    const today = new Date().toISOString().split('T')[0];
     reply.header('Content-Type', 'application/xml; charset=utf-8');
     reply.send(
       `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${baseUrl}/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${baseUrl}/auth/register</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/auth/login</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/privacy</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/about</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/terms</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>${baseUrl}/locations</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
   </url>
 </urlset>`,
     );

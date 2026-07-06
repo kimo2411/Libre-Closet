@@ -43,16 +43,17 @@ librecloset_data
 
 ## 账号和注册
 
-当前 NAS 示例默认开启登录：
+当前 NAS 示例默认不启用登录，适合只在个人 NAS 或受信任访问链接中使用：
+
+```env
+AUTH_ENABLED=false
+```
+
+如果以后你仍然想开启一个简单账号，可以改成：
 
 ```env
 AUTH_ENABLED=true
-```
-
-如果只想自己使用，建议注册完自己的账号后，把注册关闭：
-
-```env
-DISABLE_REGISTRATION=true
+DISABLE_REGISTRATION=false
 ```
 
 然后重启容器：

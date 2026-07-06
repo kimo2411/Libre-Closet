@@ -2,6 +2,21 @@
 
 > Your wardrobe. Your data.
 
+## Personal NAS fork
+
+This fork is being adapted into a simple Chinese personal NAS app for tracking
+where clothing is stored at home. The main experience is now a storage-location
+photo album:
+
+- Create storage locations such as closets, drawers, boxes, and shelves.
+- Add a cover photo for each location.
+- Open a location and batch upload clothing photos.
+- Run without accounts by default for private NAS use.
+- Optional auth now accepts a simple username and simple password.
+
+For NAS deployment, use [`docker-compose.nas.yml`](docker-compose.nas.yml) and
+[`docs/NAS_DEPLOY_ZH.md`](docs/NAS_DEPLOY_ZH.md).
+
 A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, upload photos, build outfits, and access everything from your phone as an offline-ready PWA - all on your own server.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)

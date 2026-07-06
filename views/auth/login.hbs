@@ -13,7 +13,7 @@
 </script>
 
 <main class="flex flex-col justify-center items-center h-full">
-  <h1 class="text-2xl font-bold mb-4">{{t 'lang.LOGIN_OG_TITLE'}}</h1>
+  <h1 class="text-2xl font-bold mb-4">登录</h1>
   {{#if error}}
   <div
     role="alert"
@@ -40,32 +40,29 @@
     <fieldset
       class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
     >
-      <legend class="fieldset-legend">{{t 'lang.LOGIN'}}</legend>
+      <legend class="fieldset-legend">登录</legend>
 
-      <label class="label">{{t 'lang.EMAIL'}}</label>
+      <label class="label">账号</label>
       <label class="input">
         <input
           name="email"
-          type="email"
-          placeholder="{{t 'lang.EMAIL'}}"
+          type="text"
+          placeholder="随便填写一个账号"
           required
         />
       </label>
 
-      <label class="label">{{t 'lang.PASSWORD'}}</label>
+      <label class="label">密码</label>
       <label class="input">
         <input
           name="password"
           type="password"
           required
-          placeholder="{{t 'lang.PASSWORD'}}"
+          placeholder="简单密码也可以"
         />
       </label>
-      <a class="ml-auto link link-info" href="/auth/reset"
-        >{{t 'lang.FORGOT_PASSWORD'}}</a
-      >
       <button type="submit" class="btn btn-neutral mt-4">
-        {{t 'lang.LOGIN'}}
+        登录
       </button>
     </fieldset>
   </form>

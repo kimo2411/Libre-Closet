@@ -13,7 +13,7 @@
 </script>
 
 <main class="flex flex-col justify-center items-center h-full">
-  <h1 class="text-2xl font-bold mb-4">{{t 'lang.REGISTER_OG_TITLE'}}</h1>
+  <h1 class="text-2xl font-bold mb-4">注册</h1>
   <form hx-post="/auth/register" hx-indicator="#loading" hx-trigger="submit">
     <fieldset
       class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
@@ -22,16 +22,16 @@
       hx-trigger="change, blur delay:500ms"
       hx-include="input"
     >
-      <legend class="fieldset-legend">{{t 'lang.REGISTER'}}</legend>
+      <legend class="fieldset-legend">注册</legend>
 
-      <label class="label">{{t 'lang.EMAIL'}}</label>
+      <label class="label">账号</label>
       <label class="input {{#if (filterErrors validationErrors "email")}}input-error{{/if}}">
         <input
           id="email"
           name="email"
-          type="email"
+          type="text"
           value="{{input.email}}"
-          placeholder="{{t 'lang.EMAIL'}}"
+          placeholder="随便填写一个账号"
           required
         />
       </label>
@@ -39,7 +39,7 @@
       <p class="text-error">{{this}}</p>
       {{/each}}
 
-      <label class="label">{{t 'lang.PASSWORD'}}</label>
+      <label class="label">密码</label>
       <label class="input {{#if (filterErrors validationErrors "password")}}input-error{{/if}}">
         <input
           id="password"
@@ -47,7 +47,7 @@
           type="password"
           value="{{input.password}}"
           required
-          placeholder="{{t 'lang.PASSWORD'}}"
+          placeholder="简单密码也可以"
           autocomplete="new-password"
         />
       </label>
@@ -55,7 +55,7 @@
       <p class="text-error">{{this}}</p>
       {{/each}}
 
-      <label class="label">{{t 'lang.CONFIRM_PASSWORD'}}</label>
+      <label class="label">确认密码</label>
       <label class="input {{#if (filterErrors validationErrors "confirmPassword")}}input-error{{/if}}">
         <input
           id="confirmPassword"
@@ -63,14 +63,14 @@
           type="password"
           value="{{input.confirmPassword}}"
           required
-          placeholder="{{t 'lang.PASSWORD'}}"
+          placeholder="再输入一次密码"
         />
       </label>
       {{#each (filterErrors validationErrors "confirmPassword")}}
       <p class="text-error">{{this}}</p>
       {{/each}}
 
-      <button type="submit" id="submit" class="btn btn-neutral mt-4 {{#if validationErrors}}btn-disabled{{/if}}">{{t 'lang.REGISTER'}}</button>
+      <button type="submit" id="submit" class="btn btn-neutral mt-4 {{#if validationErrors}}btn-disabled{{/if}}">注册</button>
     </fieldset>
   </form>
 </main>

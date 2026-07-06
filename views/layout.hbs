@@ -43,7 +43,7 @@ https://nestjs-i18n.com/quick-start --}}
     {{!-- https://htmx.org/quirks/#attribute-inheritance --}}
     <meta name="htmx-config" content='{"disableInheritance":true}' />
 
-    <title>{{#if pageTitle}}{{pageTitle}}{{else}}{{appName}} — Free Self-Hosted Wardrobe Organizer{{/if}}</title>
+    <title>{{#if pageTitle}}{{pageTitle}} · {{appName}}{{else}}{{appName}} · 家庭衣物位置相册{{/if}}</title>
     {{! Used inconjunction with service worker sw.js to enable PWA (Progressive
     Web App) functionality. }}
     <link rel="manifest" href="/manifest.json" />

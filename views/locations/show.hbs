@@ -1,0 +1,85 @@
+{{>navbar}}
+
+<main class="min-h-screen bg-base-100 pb-28">
+  <section class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 md:px-8">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div class="flex items-center gap-3">
+        <a class="btn btn-square btn-ghost" href="/locations" aria-label="返回">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </a>
+        <div>
+          <h1 class="text-2xl font-bold md:text-3xl">{{location.name}}</h1>
+          {{#if location.notes}}
+            <p class="mt-1 text-sm text-base-content/60">{{location.notes}}</p>
+          {{/if}}
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn btn-primary" onclick="upload_items.showModal()">上传衣物照片</button>
+        <button class="btn btn-outline" onclick="change_cover.showModal()">更换位置照片</button>
+      </div>
+    </div>
+
+    {{#if location.cover}}
+      <figure class="aspect-[21/8] overflow-hidden rounded bg-base-200">
+        <img src="/file/{{location.cover.fileName}}" alt="{{location.name}}" class="h-full w-full object-cover" />
+      </figure>
+    {{/if}}
+
+    {{#if location.items.length}}
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        {{#each location.items}}
+          <figure class="group relative aspect-square overflow-hidden rounded bg-base-200">
+            <img src="/file/{{photo.fileName}}" alt="衣物照片" class="h-full w-full object-cover" loading="lazy" />
+            <form method="post" action="/locations/items/{{id}}/delete" class="absolute right-2 top-2 opacity-0 transition group-hover:opacity-100">
+              <button class="btn btn-error btn-xs" type="submit">删除</button>
+            </form>
+          </figure>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="flex min-h-[45vh] flex-col items-center justify-center rounded bg-base-200 px-6 text-center">
+        <div class="text-5xl font-light text-base-content/30">+</div>
+        <h2 class="mt-4 text-xl font-semibold">这个位置还没有衣物照片</h2>
+        <p class="mt-2 max-w-md text-sm text-base-content/60">可以一次选择多张照片上传，之后打开这个位置就能快速查看。</p>
+        <button class="btn btn-primary mt-5" onclick="upload_items.showModal()">上传照片</button>
+      </div>
+    {{/if}}
+
+    <form method="post" action="/locations/{{location.id}}/delete" class="pt-3">
+      <button class="btn btn-ghost btn-sm text-error" type="submit">删除这个位置</button>
+    </form>
+  </section>
+</main>
+
+<dialog id="upload_items" class="modal">
+  <div class="modal-box max-w-md">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button>
+    </form>
+    <h2 class="text-xl font-bold">上传衣物照片</h2>
+    <form class="mt-5 flex flex-col gap-4" method="post" action="/locations/{{location.id}}/items" enctype="multipart/form-data">
+      <input class="file-input file-input-bordered w-full" name="photos" type="file" accept="image/*" multiple required />
+      <button class="btn btn-primary" type="submit">开始上传</button>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
+
+<dialog id="change_cover" class="modal">
+  <div class="modal-box max-w-md">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button>
+    </form>
+    <h2 class="text-xl font-bold">更换位置照片</h2>
+    <form class="mt-5 flex flex-col gap-4" method="post" action="/locations/{{location.id}}/cover" enctype="multipart/form-data">
+      <input class="file-input file-input-bordered w-full" name="cover" type="file" accept="image/*" required />
+      <button class="btn btn-primary" type="submit">保存</button>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
+
+{{>dock}}
