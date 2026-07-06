@@ -13,7 +13,6 @@ import * as fs from 'fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as path from 'path';
-import sharp from 'sharp';
 import { File } from '../../dal/entity/file.entity';
 import { FileService } from '../file-service.abstract';
 
@@ -49,17 +48,14 @@ export class LocalFileService extends FileService {
       throw new HttpException('Wrong filetype', HttpStatus.BAD_REQUEST);
     }
 
-    const storedFileName = fileName ?? randomUUID() + '.webp';
-    const transformer = sharp()
-      .autoOrient()
-      .webp({ quality: 100 })
-      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const storedFileName =
+      fileName ?? `${randomUUID()}${this.extensionForUpload(upload)}`;
     const writeStream = fs.createWriteStream(
       path.join(this.directory, storedFileName),
     );
 
     try {
-      await pipeline(upload.file, transformer, writeStream);
+      await pipeline(upload.file, writeStream);
       writeStream.destroy();
     } catch (error) {
       writeStream.destroy();
@@ -89,15 +85,12 @@ export class LocalFileService extends FileService {
     }
     if (!source) return undefined;
 
-    const newFileName = `${randomUUID()}.webp`;
-    const transformer = sharp()
-      .webp({ quality: 100 })
-      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const newFileName = `${randomUUID()}${path.extname(sourceFileName) || '.jpg'}`;
     const writeStream = fs.createWriteStream(
       path.join(this.directory, newFileName),
     );
     try {
-      await pipeline(source, transformer, writeStream);
+      await pipeline(source, writeStream);
       writeStream.destroy();
     } catch (error) {
       writeStream.destroy();
@@ -163,5 +156,23 @@ export class LocalFileService extends FileService {
 
   private deleteFile(fileName: string): Promise<void> {
     return fs.promises.unlink(path.join(this.directory, fileName));
+  }
+
+  private extensionForUpload(upload: MultipartFile): string {
+    const originalExtension = path.extname(upload.filename || '').toLowerCase();
+    if (/^\.[a-z0-9]{1,8}$/.test(originalExtension)) {
+      return originalExtension;
+    }
+
+    const extensionByMime: Record<string, string> = {
+      'image/jpeg': '.jpg',
+      'image/png': '.png',
+      'image/webp': '.webp',
+      'image/gif': '.gif',
+      'image/avif': '.avif',
+      'image/heic': '.heic',
+      'image/heif': '.heif',
+    };
+    return extensionByMime[upload.mimetype] ?? '.jpg';
   }
 }
