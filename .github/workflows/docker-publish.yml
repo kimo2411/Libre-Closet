@@ -14,7 +14,6 @@ on:
 env:
   GHCR_REGISTRY: ghcr.io
   DOCKERHUB_REGISTRY: docker.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -41,7 +40,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prepare GHCR image name
+        shell: bash
+        run: echo "GHCR_IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
       - name: Log in to Docker Hub
+        if: github.repository_owner == 'Lazztech'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKERHUB_REGISTRY }}
@@ -52,9 +56,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}
-            lazztech/libre-closet
+          images: ${{ env.GHCR_IMAGE }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -64,6 +66,7 @@ jobs:
             type=sha,prefix=sha-
 
       - name: Update Docker Hub description
+        if: github.repository_owner == 'Lazztech'
         uses: peter-evans/dockerhub-description@v4
         with:
           username: lazztech

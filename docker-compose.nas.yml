@@ -1,0 +1,14 @@
+services:
+  libre-closet:
+    image: ghcr.io/kimo2411/libre-closet:latest
+    container_name: libre-closet
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./env.nas.example
+    volumes:
+      - librecloset_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  librecloset_data:

@@ -126,6 +126,10 @@ volumes:
   librecloset_data:
 ```
 
+For a personal NAS deployment, this fork also includes
+[`docker-compose.nas.yml`](docker-compose.nas.yml) and a Chinese setup guide:
+[`docs/NAS_DEPLOY_ZH.md`](docs/NAS_DEPLOY_ZH.md).
+
 ### Build from source
 
 ```bash
