@@ -127,6 +127,27 @@ docker compose pull && docker compose up -d
 
 升级前建议先备份 `data` 文件夹。
 
+## 如果提示 denied
+
+如果安装时看到类似下面的错误：
+
+```text
+Head "https://ghcr.io/v2/kimo2411/libre-closet/manifests/latest": denied
+```
+
+说明 GitHub 容器镜像还没有公开可拉取。处理方式：
+
+1. 打开 GitHub 仓库的 `Actions` 页面，确认 `Docker Publish` 已经运行成功。
+2. 打开仓库右侧或个人主页里的 `Packages`，找到 `libre-closet`。
+3. 如果 package 是 private，把 visibility 改成 public。
+4. 等 1 到 3 分钟后，在 NAS 上重新执行：
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+以后 main 分支更新后会自动重新构建 `latest` 镜像。
+
 ## 换端口
 
 如果 `32180` 和你的其它应用冲突，可以把 compose 里的这一行：
