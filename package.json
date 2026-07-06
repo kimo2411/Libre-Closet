@@ -11,8 +11,8 @@
   "scripts": {
     "build": "nest build && npm run generate",
     "generate": "npm run generate:tailwind",
-    "generate:tailwind": "npx @tailwindcss/cli -i ./views/assets/main.css -o ./public/bundle.css --minify",
-    "generate:tailwind:watch": "npx @tailwindcss/cli -i ./views/assets/main.css -o ./public/bundle.css --minify --watch",
+    "generate:tailwind": "tailwindcss -i ./views/assets/main.css -o ./public/bundle.css --minify",
+    "generate:tailwind:watch": "tailwindcss -i ./views/assets/main.css -o ./public/bundle.css --minify --watch",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "npm run generate && nest start",
