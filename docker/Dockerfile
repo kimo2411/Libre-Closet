@@ -23,6 +23,7 @@ COPY tailwind.config.js .
 COPY workbox-config.js .
 
 RUN npm run build
+RUN npm prune --omit=dev
 
 # Production stage
 FROM node:22-slim
@@ -30,8 +31,7 @@ FROM node:22-slim
 WORKDIR /app
 
 COPY package*.json ./
-COPY patches ./patches
-RUN npm ci --omit=dev
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
